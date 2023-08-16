@@ -1,0 +1,52 @@
+{% load bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset=set"utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+</head>
+<body>
+
+<div class="container mt-5">
+
+  <table class="table">
+
+    <thead>
+
+    <tr>
+      <th>Season</th>
+      <th>Region</th>
+      <th>Post-production environment name</th>
+      <th>Description</th>
+      <th>Link</th>
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+    {% for object in object_list %}
+      <tr>
+        <td>{{ object.season }}</td>
+        <td>{{ object.get_region_display }}</td>
+        <td>{{ object.name }}</td>
+        <td>{{ object.description }}</td>
+        <td><a href="http://andes-postprod:{{ object.port }}/">http://andes-postprod:{{ object.port }}/</a></td>
+      </tr>
+    {% endfor %}
+
+
+    </tbody>
+
+  </table>
+
+</div>
+
+</body>
+</html>

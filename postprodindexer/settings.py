@@ -94,7 +94,7 @@ for key in key_list:
     default_value = 3306 if "port" in key.lower() else ""
     db_connections[key] = config(key, cast=casting, default=default_value)
 
-USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=False)
+USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=True)
 if USE_LOCAL_DB:
     my_default_db = {
         'ENGINE': 'django.db.backends.sqlite3',

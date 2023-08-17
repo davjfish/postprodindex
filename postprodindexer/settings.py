@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from decouple import config
 
@@ -80,12 +80,56 @@ WSGI_APPLICATION = 'postprodindexer.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+key_list = [
+        'DB_MODE',
+        'DB_HOST',
+        'DB_PORT',
+        'DB_NAME',
+        'DB_USER',
+        'DB_PASSWORD',
+    ]
+db_connections = dict()
+for key in key_list:
+    casting = int if "port" in key.lower() else str
+    default_value = 3306 if "port" in key.lower() else ""
+    db_connections[key] = config(key, cast=casting, default=default_value)
 
-DATABASES = {
-    'default': {
+USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=False)
+if USE_LOCAL_DB:
+    my_default_db = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    if not db_connections["DB_MODE"]:
+        DB_MODE = "LOCAL"
+    else:
+        DB_MODE = db_connections["DB_MODE"]
+    DB_NAME = "db.sqlite3"
+    DB_HOST = "local"
+else:
+    my_default_db = {
+        'ENGINE': 'django.db.backends.mysql',
+        'TIME_ZONE': 'UTC',
+        'HOST': db_connections["DB_HOST"],
+        'PORT': db_connections["DB_PORT"],
+        'NAME': db_connections["DB_NAME"],
+        'USER': db_connections["DB_USER"],
+        'PASSWORD': db_connections["DB_PASSWORD"],
+        'INIT_COMMAND': 'SET default_storage_engine=INNODB',
+    }
+
+    # if we have a connection, get the names of db and host to pass in as context processors
+    DB_NAME = db_connections["DB_NAME"]
+    DB_HOST = db_connections["DB_HOST"]
+
+    # give the user an option to not define the db mode. If not provided, it will be guessed at from the host name
+    if not db_connections["DB_MODE"]:
+        DB_MODE = "PROD"
+    else:
+        DB_MODE = db_connections["DB_MODE"]
+
+DATABASES = {
+    'default': my_default_db,
 }
 
 # Password validation
@@ -126,6 +170,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 ERROR_LOG = config("ERROR_LOG", cast=str, default="/var/log/apache2/error.log")
 ACCESS_LOG = config("ACCESS_LOG", cast=str, default="/var/log/apache2/access.log")

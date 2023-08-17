@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,11 +19,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-03x7v)57f$4h6_ucubc@1p@^jh__u95-ahh=_**3_0zw!6lyd)'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Django security key
+SECRET_KEY = config('SECRET_KEY', cast=str, default='03x7v)57f$4h6_ucubc@1p@^jh__u95-ahh=_**3_0zw!6lyd')
+# should debug mode be turned on or off? default = False
+DEBUG = config("DEBUG", cast=bool, default=False)
 
 ALLOWED_HOSTS = []
 
@@ -125,3 +125,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ERROR_LOG = config("ERROR_LOG", cast=str, default="/var/log/apache2/error.log")
+ACCESS_LOG = config("ACCESS_LOG", cast=str, default="/var/log/apache2/access.log")

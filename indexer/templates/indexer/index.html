@@ -21,7 +21,7 @@
   </div>
 
   <div class="m-5">
-    <h3>Andes Post-Production Environments</h3>
+    <h3>Science Container Index</h3>
   </div>
 
 
@@ -36,8 +36,8 @@
       <tr>
         <th>Season</th>
         <th>Region</th>
-        <th>Post-production environment name</th>
-        <th>Description</th>
+        <th>Container name</th>
+        <th>Container description</th>
         <th>Link</th>
         <th>Date created</th>
       </tr>
@@ -52,7 +52,7 @@
           <td>{{ object.get_region_display }}</td>
           <td>{{ object.name }}</td>
           <td>{{ object.description }}</td>
-          <td><a href="http://andes-postprod:{{ object.port }}/">http://andes-postprod:{{ object.port }}/</a></td>
+          <td><a href="http://gulf-proxy:{{ object.port }}/">http://gulf-proxy:{{ object.port }}/</a></td>
           <td>{{ object.created_at|date }}</td>
         </tr>
       {% endfor %}

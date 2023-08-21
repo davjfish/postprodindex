@@ -95,6 +95,7 @@ for key in key_list:
 
 USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=False)
 if USE_LOCAL_DB:
+    print("using sqlite3")
     my_default_db = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',

@@ -81,7 +81,6 @@ WSGI_APPLICATION = 'postprodindexer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 key_list = [
-        'DB_MODE',
         'DB_HOST',
         'DB_PORT',
         'DB_NAME',
@@ -94,19 +93,14 @@ for key in key_list:
     default_value = 3306 if "port" in key.lower() else ""
     db_connections[key] = config(key, cast=casting, default=default_value)
 
-USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=True)
+USE_LOCAL_DB = config("USE_LOCAL_DB", cast=bool, default=False)
 if USE_LOCAL_DB:
     my_default_db = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-    if not db_connections["DB_MODE"]:
-        DB_MODE = "LOCAL"
-    else:
-        DB_MODE = db_connections["DB_MODE"]
-    DB_NAME = "db.sqlite3"
-    DB_HOST = "local"
 else:
+    print("using mysql")
     my_default_db = {
         'ENGINE': 'django.db.backends.mysql',
         'TIME_ZONE': 'UTC',
@@ -117,16 +111,6 @@ else:
         'PASSWORD': db_connections["DB_PASSWORD"],
         'INIT_COMMAND': 'SET default_storage_engine=INNODB',
     }
-
-    # if we have a connection, get the names of db and host to pass in as context processors
-    DB_NAME = db_connections["DB_NAME"]
-    DB_HOST = db_connections["DB_HOST"]
-
-    # give the user an option to not define the db mode. If not provided, it will be guessed at from the host name
-    if not db_connections["DB_MODE"]:
-        DB_MODE = "PROD"
-    else:
-        DB_MODE = db_connections["DB_MODE"]
 
 DATABASES = {
     'default': my_default_db,

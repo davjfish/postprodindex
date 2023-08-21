@@ -4,6 +4,7 @@ echo "######################### Sync repository with Master branch of remote rep
 git fetch origin
 git reset --hard HEAD
 git checkout master
+git reset --hard origin/master
 chown -R www-data:www-data .
 chmod -R 771 .
 echo "######################### activating the virtual environment"

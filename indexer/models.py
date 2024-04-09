@@ -7,6 +7,8 @@ class PostProdInstance(models.Model):
         (2, "Maritimes"),
         (3, "Quebec"),
         (4, "Newfoundland"),
+        (5, "Arctic"),
+        (6, "O&P"),
     ]
 
     season = models.PositiveIntegerField(verbose_name="season")

@@ -9,6 +9,12 @@
   <title></title>
   {% bootstrap_css %}
   {% bootstrap_javascript %}
+  <style>
+  [v-cloak] {
+      display: none;
+  }
+  </style>
+
 </head>
 <body>
 
@@ -25,8 +31,7 @@
   </div>
 
 
-  <div class="m-5">
-
+  <div class="m-5" id="app" v-cloak>
 
 
     <table class="table">
@@ -40,6 +45,7 @@
         <th>Container description</th>
         <th>Link</th>
         <th>Date created</th>
+        <th>Status</th>
       </tr>
 
       </thead>
@@ -52,8 +58,18 @@
           <td>{{ object.get_region_display }}</td>
           <td>{{ object.name }}</td>
           <td>{{ object.description }}</td>
-          <td><a href="http://glf-proxy:{{ object.port }}/">http://glf-proxy:{{ object.port }}/</a></td>
+          <td><a href="{{ object.address }}">{{ object.address }}</a></td>
           <td>{{ object.created_at|date }}</td>
+          <td>
+
+            <div v-if="status{{ object.id }} === null">
+              <div class="spinner-border mb-3" style="width: 1rem; height: 1rem;" role="status">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+            <span v-else-if="status{{ object.id }}" class="px-3" style="background-color: greenyellow; border: 1px black solid"></span>
+            <span v-else class="px-3" style="background-color: red; border: 1px black solid"></span>
+          </td>
         </tr>
       {% endfor %}
 
@@ -65,7 +81,91 @@
 
 
 </div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+
+<script type="application/javascript">
+
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
+function handleResponse(response) {
+  if (response.status === 204) {
+    return '';
+  } else if (response.status === 404) {
+    return null
+  } else {
+    return response.json();
+  }
+}
+
+
+function handleError(error) {
+  console.log(`Andes api call encountered the following error: ${error}`);
+  if (String(error).toLowerCase().includes("syntaxerror")) {
+    alert("Andes encountered an error. Please inform a system administrator or check the logs for more details.")
+  }
+}
+
+function apiService(endpoint, method, data) {
+  const config = {
+    method: method || "GET",
+    body: data !== undefined ? JSON.stringify(data) : null,
+    headers: {
+      'content-type': 'application/json',
+      'X-CSRFTOKEN': getCookie('csrftoken')
+    }
+  };
+  return fetch(endpoint, config)
+      .then(handleResponse)
+      .catch(handleError)
+}
+
+
+const {createApp} = Vue
+
+createApp({
+  delimiters: ["${", "}"],
+  data() {
+    return {
+      {% for object in object_list %}
+        status{{ object.id }}: null,
+      {% endfor %}
+    }
+  },
+  methods: {
+    getStatus(id) {
+      apiService(`api/get-status/${id}/`).then(response => {
+        this[`status${id}`] = response
+      })
+    },
+
+  },
+  created() {
+    {% for object in object_list %}
+      this.getStatus({{ object.id }});
+    {% endfor %}
+  }
+}).mount('#app')
+
+</script>
 
 
 </body>
+
 </html>

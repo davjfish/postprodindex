@@ -1,5 +1,9 @@
-from django.db import models
 
+from django.conf import settings
+
+from django.db import models
+from django.http import request
+import requests
 
 class PostProdInstance(models.Model):
     region_choices = [
@@ -23,3 +27,16 @@ class PostProdInstance(models.Model):
 
     class Meta:
         ordering = ["season", "region", "name"]
+
+
+    @property
+    def address(self):
+        return f"http://{ settings.SITE }:{ self.port }/"
+
+    @property
+    def is_alive(self):
+        try:
+            r = requests.get(self.address, timeout=5)
+            return r.status_code == 200
+        except:
+            return False

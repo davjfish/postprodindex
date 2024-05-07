@@ -159,3 +159,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ERROR_LOG = config("ERROR_LOG", cast=str, default="/var/log/apache2/error.log")
 ACCESS_LOG = config("ACCESS_LOG", cast=str, default="/var/log/apache2/access.log")
+
+
+SITE = "glf-proxy"

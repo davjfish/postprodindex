@@ -22,7 +22,7 @@
 
   <div class="text-end mt-5">
 
-    <a href="/admin">admin</a>
+{#    <a href="/admin">admin</a>#}
 
   </div>
 
@@ -32,6 +32,27 @@
 
 
   <div class="m-5" id="app" v-cloak>
+
+    <div class="mb-5">
+      <form method="GET">
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm table-bordered">
+              {{ filter.form.as_table }}
+            </table>
+          </div>
+          <div class="col">
+            <div class="mb-3">
+              <button type="submit" class="btn btn-sm btn-warning">Filter</button>
+            </div>
+            <div class="mb-3">
+              <a href="." class="btn btn-sm btn-secondary">Clear</a>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
 
 
     <table class="table">

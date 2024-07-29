@@ -26,7 +26,7 @@ class PostProdInstance(models.Model):
         return self.name
 
     class Meta:
-        ordering = ["season", "region", "name"]
+        ordering = ["-season", "region", "name"]
 
 
     @property
